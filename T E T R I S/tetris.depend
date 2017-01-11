@@ -26,3 +26,30 @@
 1484003404 source:c:\users\user\desktop\t e t r i s\tetris.cpp
 	"miniwin.h"
 
+1484004380 source:c:\users\user\desktop\ipproject-\t e t r i s\miniwin.cpp
+	<fstream>
+	<sstream>
+	<queue>
+	<math.h>
+	<process.h>
+	<windows.h>
+	<windowsx.h>
+	"miniwin.h"
+	<cstdio>
+	<cstdlib>
+	<iostream>
+	<string>
+	<queue>
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xos.h>
+	<X11/Xatom.h>
+	<X11/keysym.h>
+	"miniwin.h"
+
+1484001204 c:\users\user\desktop\ipproject-\t e t r i s\miniwin.h
+	<iostream>
+
+1484003404 source:c:\users\user\desktop\ipproject-\t e t r i s\tetris.cpp
+	"miniwin.h"
+
