@@ -1,3 +1,5 @@
+#include<cstdlib>
+#include<ctime>
 #include"miniwin.h"
 using namespace miniwin;
 const int t=25;
@@ -122,15 +124,73 @@ bool coliziune_tabel(tabel&tab, const piesa&p)
     return coliziune;
 }
 
+coordonate perifs[6][3]={{{1,0},{0,1},{1,1}},//patrat
+                         {{1,0},{-1,1},{0,1}},//s
+                         {{0,1},{1,1},{-1,0}},//2
+                         {{0,1},{0,-1},{1,1}},//L
+                         {{0,1},{0,-1},{-1,1}},//L invers
+                         {{0,1},{0,-1},{0,2}},//bara
+                        };
+
+void piesa_noua(piesa&p)
+{
+    p.orig.x=5;
+    p.orig.y=3;
+    p.culoare=1+rand()%6; //1-RAND_MAX+1
+    //culoare piese random
+    int r=rand()%6;
+    int i;
+    for(i=0;i<3;i++)
+        p.perif[i]=perifs[r][i];
+    //piese random
+
+}
+
 int main()
 {
     redimensionare(t*coloane,t*linii);
-    piesa c={{5,10},{{1,0},{1,1},{0,1}},purpuriu};
+    srand(time(0));
     tabel tab;
     tabel_gol(tab);
-    elimina();
+    tab[0][19]=verde;
+    tab[1][19]=verde;
+    tab[5][19]=rosu;
+    tab[5][17]=galben;
     tabel_1(tab);
+    piesa c;//={{5,10},{{1,0},{1,1},{0,1}},purpuriu};
+    piesa_noua(c);
+    piesa_colturi(c);
     refresh();
+    int k=cheie();
+    while(k!=ESCAPE)
+    {
+        int x=c.orig.x;
+        int y=c.orig.y;
+        if(k==jos)
+            c.orig.y++;
+        else
+            if(k==sus)
+            c.orig.y--;
+        else
+            if(k==dreapta)
+            c.orig.x++;
+        else
+            if(k==stanga)
+            c.orig.y--;
+        if(coliziune_tabel(tab, c))
+        {
+            c.orig.x=x;
+            c.orig.y=y;
+        }
+        if(k!=nimic)
+        {
+            elimina();
+            tabel_1(tab);
+            piesa_colturi(c);
+            refresh();
+        }
+        k=cheie();
+    }
+    inchide();
     return 0;
 }
-
