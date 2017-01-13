@@ -1,6 +1,9 @@
 #include<cstdlib>
 #include<ctime>
+#include<sstream>
+#include<string>
 #include"miniwin.h"
+using namespace std;
 using namespace miniwin;
 const int t=25;
 const int linii=20;
@@ -29,7 +32,7 @@ coordonate piesa::pozitie(int n)const
 
 void patrat(int x, int y)
 {
-    dreptunghi_l(1+x*t, 1+y*t, x*t+t, y*t+t);
+    dreptunghi_l(20+1+x*t, 20+1+y*t, 20+x*t+t, 20+y*t+t);
 }
 
 void piesa_colturi(const piesa&p)
@@ -131,8 +134,8 @@ coordonate perifs[7][3]={{{1,0},{0,1},{1,1}},//patrat
 
 void piesa_noua(piesa&p)
 {
-    p.orig.x=5;
-    p.orig.y=3;
+    p.orig.x=13;
+    p.orig.y=2;
     p.culoare=1+rand()%6; //1-RAND_MAX+1
     //culoare piese random
     int r=rand()%7;
@@ -179,27 +182,74 @@ int tabel_linie(tabel&tab)
     return contor;
 }
 
+string afisare_string(int puncte)
+{
+    stringstream sout;
+    sout<<puncte;
+    return sout.str();
+}
+
+void reaparitie(const tabel&tab, const piesa&p, const piesa&sig, int puncte, int nivel)
+{
+    const int latime=t*coloane;
+    const int inaltime=t*linii;
+    elimina();
+    tabel_1(tab);
+    culoare(alb);
+    linie(20,20,20,20+inaltime);
+    linie(20,20+inaltime,20+latime,20+inaltime);
+    linie(20+latime,20+inaltime,20+latime,20);
+    text(40+latime, 20, "Piesa urmatoare:");
+    text(40+latime, 150, "Nivel");
+    text(40+latime, 250, "Puncte");
+    culoare(alb);
+    text(40+latime, 270, afisare_string(puncte));
+    text(40+latime, 170, afisare_string(nivel+1));
+    piesa_colturi(p);
+    piesa_colturi(sig);
+    refresh();
+}
+
+const int puncte_limite[10]={50,100,130,150,170,200,240,260,400};
+
+const int tics_nivel[10]={33,25,20,18,16,14,12,10,8,2};
+
+void game_over()
+{
+    culoare(alb);
+    text(140,240,"GAME OVER!");
+    refresh();
+    asteptare(4000);
+    inchide();
+}
+
 int main()
 {
     redimensionare(t*coloane+220,t*linii+100);
     srand(time(0));
-    int tic=0;
+    int tic=0, puncte=0, nivel=0;
     tabel tab;
     tabel_gol(tab);
-    tabel_1(tab);
-    piesa c;
+
+    piesa c, sig;
     piesa_noua(c);
-    piesa_colturi(c);
-    refresh();
+    piesa_noua(sig);
+    c.orig.x=5;
+
+
+    reaparitie(tab,c,sig, puncte, nivel);
+
     int k=cheie();
     while(k!=ESCAPE)
     {
         piesa copie=c;
-        if(k==nimic && tic>43)
+        if(k==nimic && tic>tics_nivel[nivel])
         {
             tic=0;
             k=jos;
         }
+        if(k==int('N'))
+            nivel++;
         if(k==jos)
             c.orig.y++;
         else
@@ -218,20 +268,21 @@ int main()
                 {
                     tabel_incrustare_piesa(tab,c);
                     int cont=tabel_linie(tab);
-                    piesa_noua(c);
+                    int puncte=puncte+cont*cont;
+                    if(puncte>puncte_limite[nivel])
+                        nivel++;
+                    c=sig;
+                    piesa_noua(sig);
+                    c.orig.x=5;
+                    if(coliziune_tabel(tab,c))
+                        game_over();
+
                 }
             }
 
         if(k!=nimic)
         {
-            elimina();
-            tabel_1(tab);
-            culoare(alb);
-            linie(0,0,0,t*linii);
-            linie(0,t*linii,t*coloane,t*linii);
-            linie(t*coloane,t*linii,t*coloane,0);
-            piesa_colturi(c);
-            refresh();
+            reaparitie(tab,c,sig, puncte, nivel);
         }
         asteptare(30);
         tic++;
