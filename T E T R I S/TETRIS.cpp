@@ -219,7 +219,7 @@ void game_over()
     culoare(alb);
     text(140,240,"GAME OVER!");
     refresh();
-    asteptare(4400);
+    asteptare(4000);
     inchide();
 }
 
