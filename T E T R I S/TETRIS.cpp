@@ -54,7 +54,8 @@ coordonate rotatie_dreapta(const coordonate&c)
 
 void rotire_dreapta(piesa&p)
 {
-    for(int i=0;i<3;i++)
+    int i;
+    for(i=0;i<3;i++)
         p.perif[i]=rotatie_dreapta(p.perif[i]);
 }
 
@@ -253,14 +254,14 @@ int main()
         if(k==jos)
             c.orig.y++;
         else
-            {if(k==sus)
+        if(k==sus)
             rotire_dreapta(c);
-             else
-                {if(k==dreapta)
-                c.orig.x++;
-                else
-                   {if(k==stanga)
-                   c.orig.x--;}}}
+        else
+            if(k==dreapta)
+            c.orig.x++;
+        else
+        if(k==stanga)
+            c.orig.x--;
         if(coliziune_tabel(tab, c))
             {
                 c=copie;
