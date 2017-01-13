@@ -120,11 +120,12 @@ bool coliziune_tabel(tabel&tab, const piesa&p)
     return coliziune;
 }
 
-coordonate perifs[6][3]={{{1,0},{0,1},{1,1}},//patrat
+coordonate perifs[7][3]={{{1,0},{0,1},{1,1}},//patrat
                          {{1,0},{-1,1},{0,1}},//s
                          {{0,1},{1,1},{-1,0}},//2
                          {{0,1},{0,-1},{1,1}},//L
                          {{0,1},{0,-1},{-1,1}},//L invers
+                         {{-1,0},{1,0},{0,1}},//T
                          {{0,1},{0,-1},{0,2}},//bara
                         };
 
@@ -134,7 +135,7 @@ void piesa_noua(piesa&p)
     p.orig.y=3;
     p.culoare=1+rand()%6; //1-RAND_MAX+1
     //culoare piese random
-    int r=rand()%6;
+    int r=rand()%7;
     int i;
     for(i=0;i<3;i++)
         p.perif[i]=perifs[r][i];
@@ -180,8 +181,9 @@ int tabel_linie(tabel&tab)
 
 int main()
 {
-    redimensionare(t*coloane,t*linii);
+    redimensionare(t*coloane+220,t*linii+100);
     srand(time(0));
+    int tic=0;
     tabel tab;
     tabel_gol(tab);
     tabel_1(tab);
@@ -193,6 +195,11 @@ int main()
     while(k!=ESCAPE)
     {
         piesa copie=c;
+        if(k==nimic && tic>43)
+        {
+            tic=0;
+            k=jos;
+        }
         if(k==jos)
             c.orig.y++;
         else
@@ -203,22 +210,31 @@ int main()
                 c.orig.x++;
                 else
                    {if(k==stanga)
-                   c.orig.y--;}}}
+                   c.orig.x--;}}}
         if(coliziune_tabel(tab, c))
-            c=copie;
-        if(k==spatiu)
-        {
-            tabel_incrustare_piesa(tab,c);
-            int cont=tabel_linie(tab);
-            piesa_noua(c);
-        }
+            {
+                c=copie;
+                if(k==jos)
+                {
+                    tabel_incrustare_piesa(tab,c);
+                    int cont=tabel_linie(tab);
+                    piesa_noua(c);
+                }
+            }
+
         if(k!=nimic)
         {
             elimina();
             tabel_1(tab);
+            culoare(alb);
+            linie(0,0,0,t*linii);
+            linie(0,t*linii,t*coloane,t*linii);
+            linie(t*coloane,t*linii,t*coloane,0);
             piesa_colturi(c);
             refresh();
         }
+        asteptare(30);
+        tic++;
         k=cheie();
     }
     inchide();

@@ -26,7 +26,7 @@
 1484003404 source:c:\users\user\desktop\t e t r i s\tetris.cpp
 	"miniwin.h"
 
-1484004380 source:c:\users\user\desktop\ipproject-\t e t r i s\miniwin.cpp
+1484274749 source:c:\users\user\desktop\ipproject-\t e t r i s\miniwin.cpp
 	<fstream>
 	<sstream>
 	<queue>
@@ -47,9 +47,11 @@
 	<X11/keysym.h>
 	"miniwin.h"
 
-1484001204 c:\users\user\desktop\ipproject-\t e t r i s\miniwin.h
+1484274754 c:\users\user\desktop\ipproject-\t e t r i s\miniwin.h
 	<iostream>
 
-1484003404 source:c:\users\user\desktop\ipproject-\t e t r i s\tetris.cpp
+1484272990 source:c:\users\user\desktop\ipproject-\t e t r i s\tetris.cpp
+	<cstdlib>
+	<ctime>
 	"miniwin.h"
 
