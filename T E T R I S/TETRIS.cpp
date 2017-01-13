@@ -6,30 +6,26 @@ const int t=25;
 const int linii=20;
 const int coloane=10;
 
+typedef int tabel[coloane][linii];
 struct coordonate{int x,y;};
+
 
 struct piesa{coordonate orig;
              coordonate perif[3];
              int culoare;
-             coordonate pozitie(int n)const;};
+             coordonate pozitie(int n)const;//n cuprins intre 0 si 3(0=central, 1-3 periferii)
+            };
 
 coordonate piesa::pozitie(int n)const
 {
-    coordonate ret;
-    if(n==0)
+    coordonate ret={orig.x, orig.y};
+    if(n!=0)
     {
-        ret.x=orig.x;
-        ret.y=orig.y;
-    }
-    else
-    {
-        ret.x=orig.x+perif[n-1].x;
-        ret.y=orig.y+perif[n-1].y;
+        ret.x+=perif[n-1].x;
+        ret.y+=perif[n-1].y;
     }
     return ret;
 }
-
-typedef int tabel[coloane][linii];
 
 void patrat(int x, int y)
 {
@@ -49,7 +45,7 @@ void piesa_colturi(const piesa&p)
 
 coordonate rotatie_dreapta(const coordonate&c)
 {
-    coordonate ret={-c.y,c.x};
+    coordonate ret={-c.y, c.x};
     return ret;
 }
 
@@ -146,41 +142,75 @@ void piesa_noua(piesa&p)
 
 }
 
+bool tabel_linie_plina(const tabel&tab, int linie)
+{
+    for(int i=0;i<coloane;i++)
+        if(tab[i][linie]==negru)
+           return false;
+    return true;
+}
+
+void tabel_eliminare_linie(tabel&tab, int linie)
+{
+    for(int j=linie;j>0;j--)
+        {
+            for(int i=0;i<coloane;i++)
+                tab[i][j]=tab[i][j-1];
+        }
+    for(int i=0;i<coloane;i++)
+        tab[i][0]=negru;
+}
+
+
+int tabel_linie(tabel&tab)
+{
+    int linie=linii-1;
+    int contor=0;
+    while(linie>=0)
+    {
+        if(tabel_linie_plina(tab, linie))
+            {
+                tabel_eliminare_linie(tab, linie);
+                contor++;
+            }
+        else linie--;
+    }
+    return contor;
+}
+
 int main()
 {
     redimensionare(t*coloane,t*linii);
     srand(time(0));
     tabel tab;
     tabel_gol(tab);
-    tab[0][19]=verde;
-    tab[1][19]=verde;
-    tab[5][19]=rosu;
-    tab[5][17]=galben;
     tabel_1(tab);
-    piesa c;//={{5,10},{{1,0},{1,1},{0,1}},purpuriu};
+    piesa c;
     piesa_noua(c);
     piesa_colturi(c);
     refresh();
     int k=cheie();
     while(k!=ESCAPE)
     {
-        int x=c.orig.x;
-        int y=c.orig.y;
+        piesa copie=c;
         if(k==jos)
             c.orig.y++;
         else
-            if(k==sus)
-            c.orig.y--;
-        else
-            if(k==dreapta)
-            c.orig.x++;
-        else
-            if(k==stanga)
-            c.orig.y--;
+            {if(k==sus)
+            rotire_dreapta(c);
+             else
+                {if(k==dreapta)
+                c.orig.x++;
+                else
+                   {if(k==stanga)
+                   c.orig.y--;}}}
         if(coliziune_tabel(tab, c))
+            c=copie;
+        if(k==spatiu)
         {
-            c.orig.x=x;
-            c.orig.y=y;
+            tabel_incrustare_piesa(tab,c);
+            int cont=tabel_linie(tab);
+            piesa_noua(c);
         }
         if(k!=nimic)
         {
